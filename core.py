@@ -1,4 +1,5 @@
 import os
+import re
 import time
 import pefile
 from rich.console import Console
@@ -7,13 +8,12 @@ from rich.prompt import Prompt
 from modules.static_analysis import analyze_dll
 from modules.analysis import static_headers
 from modules.static_strings import show_all_strings, show_suspect_strings
-from modules.analysis.anti_evade_scanner import detect_anti_debug_vm
+from modules.analysis.anti_evade_scanner import detect_anti_debug_vm, detect_anti_debug_vm_heuristic
 
 console = Console()
 
 selected_dll = None
 selected_loader = None
-
 
 def banner():
     console.clear()
@@ -23,20 +23,20 @@ def banner():
           /  ###                        #                                             
              /##                       ##                                             
             /  ##                      ##                                             
-            /  ##     ##   ####      ######## /###     /###     /###   ##   ####      
-           /    ##     ##    ###  / ######## / ###  / / ###  / / #### / ##    ###  /  
-           /    ##     ##     ###/     ##   /   ###/ /   ###/ ##  ###/  ##     ###/   
-          /      ##    ##      ##      ##  ##    ## ##    ## ####       ##      ##    
-          /########    ##      ##      ##  ##    ## ##    ##   ###      ##      ##    
-         /        ##   ##      ##      ##  ##    ## ##    ##     ###    ##      ##    
-         #        ##   ##      ##      ##  ##    ## ##    ##       ###  ##      ##    
-        /####      ##  ##      /#      ##  ##    ## ##    ##  /###  ##  ##      ##    
-       /   ####    ## / ######/ ##     ##   ######  #######  / #### /    #########    
-      /     ##      #/   #####   ##     ##   ####   ######      ###/       #### ###   
-      #                                             ##                           ###  
-       ##                                           ##                    #####   ### 
-        [bold red]v0.1[/bold red] - [italic cyan]Not Social Club[/italic cyan]                      ##                  /#######  /#  
-                                                    ##                /      ###/    
+            /  ##     ##   ####      ######## /###     /###     /###   ##   ####     
+           /    ##     ##    ###  / ######## / ###  / / ###  / / #### / ##    ###/   
+           /    ##     ##     ###/     ##   /   ###/ /   ###/ ##  ###/  ##     ###/  
+          /      ##    ##      ##      ##  ##    ## ##    ## ####       ##      ##   
+          /########    ##      ##      ##  ##    ## ##    ##   ###      ##      ##   
+         /        ##   ##      ##      ##  ##    ## ##    ##     ###    ##      ##   
+         #        ##   ##      ##      ##  ##    ## ##    ##       ###  ##      ##   
+        /####      ##  ##      /#      ##  ##    ## ##    ##  /###  ##  ##      ##   
+       /   ####    ## / ######/ ##     ##   ######  #######  / #### /    #########   
+      /     ##      #/   #####   ##     ##   ####   ######      ###/       #### ###  
+      #                                             ##                           ### 
+       ##                                           ##                    #####   ###
+        [bold red]v0.1[/bold red] - [italic cyan]Not Social Club[/italic cyan]                      ##                  /#######  /# 
+                                                    ##                /      ###/   
     """))
 
 def main_menu():
@@ -55,11 +55,11 @@ def main_menu():
         choice = Prompt.ask("\nEscolha uma opção", choices=["0", "1", "2", "3", "4", "5", "6"])
 
         if choice == "1":
-            selected_dll = input("Digite o caminho da DLL: ")
+            selected_dll = input("Digite o caminho da DLL: ").strip('"').strip()
             console.print(f"[green]DLL selecionada:[/green] {selected_dll}")
 
         elif choice == "2":
-            selected_loader = input("Digite o caminho do Loader EXE: ")
+            selected_loader = input("Digite o caminho do Loader EXE: ").strip('"').strip()
             console.print(f"[green]Loader selecionado:[/green] {selected_loader}")
 
         elif choice == "3":
@@ -85,22 +85,40 @@ def main_menu():
                 console.print("[red]Selecione uma DLL primeiro![/red]")
                 continue
 
-            try:
-                pe = pefile.PE(selected_dll)
-                with open(selected_dll, 'rb') as f:
-                    raw_data = f.read()
-                all_strings = set([s.decode(errors='ignore') for s in raw_data.split(b'\x00') if len(s) > 4])
+            console.print("\n[bold yellow]Modo de Detecção[/bold yellow]")
+            console.print("[1] Detecção Clássica")
+            console.print("[2] Heurística com confiabilidade")
+            console.print("[3] Mostrar as duas")
 
-                anti_hits = detect_anti_debug_vm(pe, all_strings)
-                if anti_hits:
-                    console.print("[bold red][!] Técnicas suspeitas de Anti-Debug ou Anti-VM detectadas:[/bold red]")
-                    for h in anti_hits:
-                        console.print(f" → {h}")
-                else:
-                    console.print("[green]Nenhuma técnica suspeita detectada.[/green]")
+            sub_choice = Prompt.ask("\nEscolha o modo de detecção", choices=["1", "2", "3"], default="3")
+            all_strings = show_all_strings(selected_dll, console, return_list=True)
 
-            except Exception as e:
-                console.print(f"[red]Erro ao analisar DLL:[/red] {e}")
+            pe = pefile.PE(selected_dll)
+            hits = {}
+
+            if sub_choice in ["1", "3"]:
+                hits.update(detect_anti_debug_vm(pe, all_strings))
+            if sub_choice in ["2", "3"]:
+                heuristic = detect_anti_debug_vm_heuristic(all_strings, pe, console)    
+                for cat, values in heuristic.items():
+                    if cat in hits:
+                        hits[cat].extend(values)
+                    else:
+                        hits[cat] = values
+
+            if hits:
+                console.print("[bold red]\n[!] Técnicas suspeitas de Anti-Debug ou Anti-VM detectadas:[/bold red]")
+                for category, items in hits.items():
+                    console.print(f"\n[bold cyan]{category}:[/bold cyan]")
+                    for item in items:
+                        if isinstance(item, tuple):
+                            level, value = item
+                        else:
+                            level, value = "Suspeito", item
+                        color = "green" if level == "Seguro" else ("yellow" if level == "Suspeito" else "red")
+                        console.print(f" → [{color}]{level}[/{color}] → {value}")
+            else:
+                console.print("[green]Nenhuma técnica suspeita detectada.[/green]")
 
         elif choice == "0":
             console.print("[bold red]Saindo...[/bold red]")

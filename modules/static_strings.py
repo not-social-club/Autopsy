@@ -36,19 +36,23 @@ def extract_strings(file_path, min_length=4):
     except Exception as e:
         return [f"[ERRO] Falha ao extrair strings: {str(e)}"]
 
-def show_all_strings(file_path, console):
-    """Mostra todas as strings encontradas"""
-    console.print(f"\n[bold cyan]=== STRINGS ENCONTRADAS NA DLL ===[/bold cyan]\n")
-    strings = extract_strings(file_path)
+def show_all_strings(file_path, console, return_list=False):
+    try:
+        with open(file_path, "rb") as f:
+            data = f.read()
 
-    if not strings:
-        console.print("[red]Nenhuma string encontrada.[/red]")
-        return
+        strings = re.findall(rb"[\x1f-\x7e]{4,}", data)
+        decoded_strings = [s.decode("utf-8", errors="ignore") for s in strings]
 
-    for s in strings:
-        console.print(Text(f"- {s}", style="white"))
+        if return_list:
+            return decoded_strings
 
-    console.print(f"\n[green]Total de strings encontradas:[/green] {len(strings)}")
+        console.print("[bold green]Todas as strings encontradas:[/bold green]")
+        for s in decoded_strings:
+            console.print(f"- {s}")
+
+    except Exception as e:
+        console.print(f"[red]Erro ao extrair strings:[/red] {e}")
 
 def show_suspect_strings(file_path, console):
     """Mostra apenas strings com palavras-chave suspeitas"""
