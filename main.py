@@ -46,13 +46,12 @@ def main_menu():
         console.print("\n[bold green]MENU PRINCIPAL[/bold green]", style="bold underline")
         console.print("[1] Selecionar DLL (Payload)")
         console.print("[2] Selecionar Loader (EXE)")
-        console.print("[3] Executar Análise Estática")
-        console.print("[4] Ver TODAS as Strings da DLL")
-        console.print("[5] Ver STRINGS SUSPEITAS da DLL")
-        console.print("[6] Detectar Anti-Debug / Anti-VM")
+        console.print("[3] Análise Estática da DLL")
+        console.print("[4] Analisar Strings da DLL")
+        console.print("[5] Detectar Anti-Debug / Anti-VM")
         console.print("[0] Sair")
 
-        choice = Prompt.ask("\nEscolha uma opção", choices=["0", "1", "2", "3", "4", "5", "6"])
+        choice = Prompt.ask("\nEscolha uma opção", choices=["0", "1", "2", "3", "4", "5"])
 
         if choice == "1":
             selected_dll = input("Digite o caminho da DLL: ").strip('"').strip()
@@ -66,21 +65,29 @@ def main_menu():
             if not selected_dll:
                 console.print("[red]Selecione uma DLL primeiro![/red]")
                 continue
-            analyze_dll(selected_dll)
+            analyze_dll(selected_dll, console)
 
         elif choice == "4":
             if not selected_dll:
                 console.print("[red]Selecione uma DLL primeiro![/red]")
                 continue
-            show_all_strings(selected_dll, console)
+
+            while True:
+                console.print("\n[bold yellow]Análise de Strings da DLL[/bold yellow]")
+                console.print("[1] Ver TODAS as Strings")
+                console.print("[2] Ver STRINGS SUSPEITAS")
+                console.print("[0] Voltar")
+
+                string_choice = Prompt.ask("\nEscolha uma opção", choices=["0", "1", "2"])
+
+                if string_choice == "1":
+                    show_all_strings(selected_dll, console)
+                elif string_choice == "2":
+                    show_suspect_strings(selected_dll, console)
+                elif string_choice == "0":
+                    break
 
         elif choice == "5":
-            if not selected_dll:
-                console.print("[red]Selecione uma DLL primeiro![/red]")
-                continue
-            show_suspect_strings(selected_dll, console)
-
-        elif choice == "6":
             if not selected_dll:
                 console.print("[red]Selecione uma DLL primeiro![/red]")
                 continue
