@@ -1,27 +1,22 @@
 import pefile
-import os
+from rich.table import Table
 
-def analyze_headers_and_sections(dll_path):
-    if not os.path.isfile(dll_path):
-        print(f"[-] Arquivo não encontrado: {dll_path}")
-        return
-
+def parse_pe_headers(path, console):
     try:
-        pe = pefile.PE(dll_path)
-        print("\n=== HEADERS PRINCIPAIS ===")
-        print(f"Magic: {hex(pe.DOS_HEADER.e_magic)}")
-        print(f"NT Headers Signature: {hex(pe.NT_HEADERS.Signature)}")
-        print(f"Machine: {hex(pe.FILE_HEADER.Machine)}")
-        print(f"Número de Seções: {pe.FILE_HEADER.NumberOfSections}")
-        print(f"TimeDateStamp: {pe.FILE_HEADER.TimeDateStamp}")
-        
-        print("\n=== SEÇÕES PE ===")
-        for section in pe.sections:
-            print(f"[{section.Name.decode(errors='ignore').strip()}]")
-            print(f"  Virtual Address: {hex(section.VirtualAddress)}")
-            print(f"  Virtual Size   : {hex(section.Misc_VirtualSize)}")
-            print(f"  Raw Size       : {hex(section.SizeOfRawData)}")
-            print(f"  Flags          : {hex(section.Characteristics)}\n")
-    
+        pe = pefile.PE(path)
+
+        table = Table(title="PE Headers")
+        table.add_column("Campo", style="cyan", no_wrap=True)
+        table.add_column("Valor", style="magenta")
+
+        table.add_row("Machine", hex(pe.FILE_HEADER.Machine))
+        table.add_row("NumberOfSections", str(pe.FILE_HEADER.NumberOfSections))
+        table.add_row("TimeDateStamp", hex(pe.FILE_HEADER.TimeDateStamp))
+        table.add_row("Characteristics", hex(pe.FILE_HEADER.Characteristics))
+        table.add_row("EntryPoint", hex(pe.OPTIONAL_HEADER.AddressOfEntryPoint))
+        table.add_row("ImageBase", hex(pe.OPTIONAL_HEADER.ImageBase))
+
+        console.print(table)
+
     except Exception as e:
-        print(f"Erro na análise: {e}")
+        console.print(f"[bold red]Erro ao analisar PE:[/] {e}")

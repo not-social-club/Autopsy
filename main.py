@@ -5,6 +5,7 @@ import pefile
 from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import Prompt
+from modules.analysis.loader_analysis import analyze_loader
 from modules.static_analysis import analyze_dll
 from modules.analysis import static_headers
 from modules.static_strings import show_all_strings, show_suspect_strings
@@ -49,9 +50,10 @@ def main_menu():
         console.print("[3] Análise Estática da DLL")
         console.print("[4] Analisar Strings da DLL")
         console.print("[5] Detectar Anti-Debug / Anti-VM")
+        console.print("[6] Análise do Loader")
         console.print("[0] Sair")
 
-        choice = Prompt.ask("\nEscolha uma opção", choices=["0", "1", "2", "3", "4", "5"])
+        choice = Prompt.ask("\nEscolha uma opção", choices=["0", "1", "2", "3", "4", "5", "6"])
 
         if choice == "1":
             selected_dll = input("Digite o caminho da DLL: ").strip('"').strip()
@@ -126,6 +128,20 @@ def main_menu():
                         console.print(f" → [{color}]{level}[/{color}] → {value}")
             else:
                 console.print("[green]Nenhuma técnica suspeita detectada.[/green]")
+
+        elif choice == "6":
+            if not selected_loader:
+                console.print("[red]Selecione um Loader primeiro![/red]")
+                continue
+
+            console.print("\n[bold yellow]Modo de Análise do Loader[/bold yellow]")
+            console.print("[1] Análise Básica")
+            console.print("[2] Análise Profunda")
+
+            mode_choice = Prompt.ask("Escolha o modo de análise", choices=["1", "2"], default="1")
+            mode = "deep" if mode_choice == "2" else "basic"
+
+            analyze_loader(selected_loader, mode=mode)
 
         elif choice == "0":
             console.print("[bold red]Saindo...[/bold red]")

@@ -1,5 +1,10 @@
 from modules.analysis import static_headers
 
-def analyze_dll(dll_path):
-    print(f"Iniciando análise estática da DLL: {dll_path}\n")
-    static_headers.analyze_headers_and_sections(dll_path)
+def analyze_dll(path, console=None):
+    if console:
+        console.print(f"\n[bold cyan]⮞ Iniciando análise estática da DLL:[/] {path}\n")
+    else:
+        print(f"\n⮞ Iniciando análise estática da DLL: {path}\n")
+
+    # Corrigido: chama a função correta
+    static_headers.parse_pe_headers(path, console)

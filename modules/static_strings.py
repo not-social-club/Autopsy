@@ -49,10 +49,11 @@ def show_all_strings(file_path, console, return_list=False):
 
         console.print("[bold green]Todas as strings encontradas:[/bold green]")
         for s in decoded_strings:
-            console.print(f"- {s}")
+            console.print(f"- {s}", markup=False)
 
     except Exception as e:
-        console.print(f"[red]Erro ao extrair strings:[/red] {e}")
+        console.print("[red]Erro ao extrair strings:[/red]")
+        console.print(str(e), markup=False)
 
 def show_suspect_strings(file_path, console):
     """Mostra apenas strings com palavras-chave suspeitas"""
