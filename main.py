@@ -5,7 +5,7 @@ import pefile
 from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import Prompt
-from modules.analysis.loader_analysis import analyze_loader
+from modules.analysis.loader_analysis import analisar_loader
 from modules.static_analysis import analyze_dll
 from modules.analysis import static_headers
 from modules.static_strings import show_all_strings, show_suspect_strings
@@ -141,7 +141,7 @@ def main_menu():
             mode_choice = Prompt.ask("Escolha o modo de análise", choices=["1", "2"], default="1")
             mode = "deep" if mode_choice == "2" else "basic"
 
-            analyze_loader(selected_loader, mode=mode)
+            analisar_loader(selected_loader, deep=(mode == "2"))
 
         elif choice == "0":
             console.print("[bold red]Saindo...[/bold red]")
