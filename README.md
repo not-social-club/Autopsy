@@ -46,7 +46,7 @@ Modo de energia: performance máxima
 
 Remover serviços que geram logs ou fazem upload de dados
 
-🧰 2. Instalar Ferramentas
+2. Instalar Ferramentas
 Baixar e instalar:
 
 x64dbg (com stealth plugin)
