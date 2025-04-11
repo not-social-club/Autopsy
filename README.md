@@ -1,83 +1,45 @@
 ![License](https://img.shields.io/badge/license-NSC%20Confidential-red)
 
-# Not Social Club Autopsy
+# NSC Reverse Autopsy
 
-Ferramenta stealth de engenharia reversa para análise de loaders e DLLs.  
-Realiza análise estática, detecção de linguagem, fingerprint de verificações e prepara terreno para análise dinâmica com x64dbg.
+Engenharia reversa agressiva e stealth pra analisar DLLs e loaders de cheat/hack.  
+Sem rastros, sem sentimentalismo.
 
 ---
 
-## Pré-requisitos
+## O que faz
 
-Certifique-se de ter o Python instalado.
+- Análise estática de DLLs e Loaders (.exe)
+- Fingerprint de linguagem e anti-debug
+- Dump de strings, PE header, imports, exports, entropy
+- Prepara tudo pra análise dinâmica com x64dbg em modo stealth
+- Módulo automático de decoding (ex: base64)
+- Stealth VM Setup incluso
 
-- Python 3.8 ou superior
-- pip (gerenciador de pacotes)
+---
 
-Execute no CMD para verificar:
+## Requisitos
 
+- Python 3.8+
+- `pip`
+- Windows (recomenda-se rodar em VM)
+
+```bash
 python --version
 pip --version
+```
 
-## Instalação
-1. Clone o projeto ou baixe os arquivos:
+##Instalação
 
-- git clone https://github.com/not-social-club/Autopsy.git
-- cd autopsy
-- pip install -r requirements.txt
+`git clone https://github.com/not-social-club/Autopsy.git`
+`cd Autopsy`
+`pip install -r requirements.txt`
 
-2. Crie um ambiente virtual (opcional mas recomendado):
+##Ambiente virtual recomendado:
 
-- python -m venv venv
-- venv\Scripts\activate
-
-1. Configuração do Sistema
-Renomear a máquina com um nome aleatório (estilo DESKTOP-XXXXXXX)
-
-Desativar atualizações automáticas
-
-Desativar o Windows Defender (AntiSpyware e AntiVirus)
-
-Desativar Telemetria da Microsoft (via serviços, agendamentos, policies)
-
-Desabilitar Sysmon, PowerShell Logging, Event Tracing
-
-Modo de energia: performance máxima
-
-Remover serviços que geram logs ou fazem upload de dados
-
-2. Instalar Ferramentas
-Baixar e instalar:
-
-x64dbg (com stealth plugin)
-
-PE-bear
-
-CFF Explorer
-
-Ghidra (opcional)
-
-Python 3.12 + pip
-
-Git
-
-Visual Studio Code
-
-Ferramentas auxiliares: sigcheck, procexp, procdump, etc
-
-Criar aliases úteis no PowerShell
-
-3. Evasão
-Alterar UID de rede (MAC spoofing)
-
-Alterar hostname
-
-Spoofar manufacturer (WMI)
-
-Inserir chaves fake no registro (como se fosse uma instalação OEM normal)
-
-Set-ExecutionPolicy Bypass -Scope Process -Force
-.\NSC_VM_StealthSetup.ps1
+`python -m venv venv`
+`venv\Scripts\activate`
 
 
-Criado por @fbreseghello
+##Pra análise segura e indetectável em sandbox/VM.
+Vai em vm_stealth_setup/ e segue as instruções no README.md lá dentro.
