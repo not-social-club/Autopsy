@@ -35,7 +35,7 @@ Prepara uma VM pra engenharia reversa e análise ofensiva sem deixar rastros.
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force
 .\stealth_vm_setup.ps1
-
+```
 
 Uso é por sua conta.
 
