@@ -31,7 +31,53 @@ pip --version
 - python -m venv venv
 - venv\Scripts\activate
 
-# Os resultados serão salvos em output/logs/static_analysis_log.txt
+1. Configuração do Sistema
+Renomear a máquina com um nome aleatório (estilo DESKTOP-XXXXXXX)
+
+Desativar atualizações automáticas
+
+Desativar o Windows Defender (AntiSpyware e AntiVirus)
+
+Desativar Telemetria da Microsoft (via serviços, agendamentos, policies)
+
+Desabilitar Sysmon, PowerShell Logging, Event Tracing
+
+Modo de energia: performance máxima
+
+Remover serviços que geram logs ou fazem upload de dados
+
+🧰 2. Instalar Ferramentas
+Baixar e instalar:
+
+x64dbg (com stealth plugin)
+
+PE-bear
+
+CFF Explorer
+
+Ghidra (opcional)
+
+Python 3.12 + pip
+
+Git
+
+Visual Studio Code
+
+Ferramentas auxiliares: sigcheck, procexp, procdump, etc
+
+Criar aliases úteis no PowerShell
+
+3. Evasão
+Alterar UID de rede (MAC spoofing)
+
+Alterar hostname
+
+Spoofar manufacturer (WMI)
+
+Inserir chaves fake no registro (como se fosse uma instalação OEM normal)
+
+Set-ExecutionPolicy Bypass -Scope Process -Force
+.\NSC_VM_StealthSetup.ps1
 
 
 Criado por @fbreseghello
