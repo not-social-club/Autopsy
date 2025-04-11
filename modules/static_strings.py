@@ -1,5 +1,3 @@
-# modules/static_strings.py
-
 import re
 from rich.text import Text
 
@@ -37,24 +35,23 @@ def extract_strings(file_path, min_length=4):
         return [f"[ERRO] Falha ao extrair strings: {str(e)}"]
 
 def show_all_strings(file_path, console, return_list=False):
-    try:
-        with open(file_path, "rb") as f:
-            data = f.read()
+    """Mostra todas as strings encontradas ou retorna como lista, se solicitado"""
+    strings = extract_strings(file_path)
 
-        strings = re.findall(rb"[\x1f-\x7e]{4,}", data)
-        decoded_strings = [s.decode("utf-8", errors="ignore") for s in strings]
+    if return_list:
+        return strings
 
-        if return_list:
-            return decoded_strings
+    console.print(f"\n[bold cyan]=== STRINGS ENCONTRADAS NA DLL ===[/bold cyan]\n")
 
-        console.print("[bold green]Todas as strings encontradas:[/bold green]")
-        for s in decoded_strings:
-            console.print(f"- {s}", markup=False)
+    if not strings:
+        console.print("[red]Nenhuma string encontrada.[/red]")
+        return
 
-    except Exception as e:
-        console.print("[red]Erro ao extrair strings:[/red]")
-        console.print(str(e), markup=False)
+    for s in strings:
+        console.print(Text(f"- {s}", style="white"))
 
+    console.print(f"\n[green]Total de strings encontradas:[/green] {len(strings)}")
+    
 def show_suspect_strings(file_path, console):
     """Mostra apenas strings com palavras-chave suspeitas"""
     console.print(f"\n[bold yellow]Strings suspeitas encontradas em:[/bold yellow] {file_path}\n")

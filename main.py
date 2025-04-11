@@ -9,6 +9,7 @@ from modules.analysis.loader_analysis import analisar_loader
 from modules.static_analysis import analyze_dll
 from modules.analysis import static_headers
 from modules.static_strings import show_all_strings, show_suspect_strings
+from modules.analysis.base64_decoder import analisar_strings_com_base64
 from modules.analysis.anti_evade_scanner import detect_anti_debug_vm, detect_anti_debug_vm_heuristic
 
 console = Console()
