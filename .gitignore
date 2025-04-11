@@ -1,0 +1,11 @@
+venv/
+.env/
+.venv/
+__pycache__/
+*.py[cod]
+.pyc
+*.log
+.vscode/
+.idea/
+*.tmp
+*.swp
