@@ -29,17 +29,17 @@ python --version
 pip --version
 ```
 
-##Instalação
+## Instalação
 
 `git clone https://github.com/not-social-club/Autopsy.git`
 `cd Autopsy`
 `pip install -r requirements.txt`
 
-##Ambiente virtual recomendado:
+## Ambiente virtual recomendado:
 
 `python -m venv venv`
 `venv\Scripts\activate`
 
 
-##Pra análise segura e indetectável em sandbox/VM.
+## Pra análise segura e indetectável em sandbox/VM.
 Vai em vm_stealth_setup/ e segue as instruções no README.md lá dentro.
